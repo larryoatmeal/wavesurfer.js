@@ -147,6 +147,12 @@ var WaveSurfer = {
         this.backend.play(start, end);
     },
 
+    softPlay: function(start, end, fadeIn){
+        this.fireEvent('interaction', this.softPlay.bind(this, start, end));
+        this.backend.softPlay(start, end, fadeIn);
+    },
+
+
     pause: function () {
         this.backend.pause();
     },

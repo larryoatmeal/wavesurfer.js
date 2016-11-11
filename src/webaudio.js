@@ -347,6 +347,13 @@ WaveSurfer.WebAudio = {
         this.fireEvent('play');
     },
 
+    softPlay: function(start, end, fadeIn){
+        var currentVol = this.getVolume();
+        this.gainNode.gain.value = 0.0;
+        this.gainNode.gain.exponentialRampToValueAtTime(currentVol, this.ac.currentTime + fadeIn);
+        this.play(start, end);
+    },
+
     /**
      * Pauses the loaded audio.
      */

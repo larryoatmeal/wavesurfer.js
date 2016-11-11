@@ -155,6 +155,12 @@ var WaveSurfer = {
         this.backend.play(start, end);
     },
 
+    softPlay: function(start, end, fadeIn){
+        this.fireEvent('interaction', this.softPlay.bind(this, start, end));
+        this.backend.softPlay(start, end, fadeIn);
+    },
+
+
     pause: function () {
         this.backend.pause();
     },
@@ -1061,6 +1067,13 @@ WaveSurfer.WebAudio = {
         this.setState(this.PLAYING_STATE);
 
         this.fireEvent('play');
+    },
+
+    softPlay: function(start, end, fadeIn){
+        var currentVol = this.getVolume();
+        this.gainNode.gain.value = 0.0;
+        this.gainNode.gain.exponentialRampToValueAtTime(currentVol, this.ac.currentTime + fadeIn);
+        this.play(start, end);
     },
 
     /**
