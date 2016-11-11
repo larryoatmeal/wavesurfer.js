@@ -147,9 +147,19 @@ var WaveSurfer = {
         this.backend.play(start, end);
     },
 
-    softPlay: function(start, end, fadeIn){
-        this.fireEvent('interaction', this.softPlay.bind(this, start, end));
-        this.backend.softPlay(start, end, fadeIn);
+    softPlay: function(fadeIn){
+        this.fireEvent('interaction', this.softPlay.bind(this));
+        this.backend.softPlay(fadeIn);
+    },
+
+    softPause: function(fadeIn, pauseTime){
+        this.fireEvent('interaction', this.softPause.bind(this));
+        this.backend.softPause(fadeIn, pauseTime);
+    },
+
+    softStop: function(fadeIn){
+        this.fireEvent('interaction', this.softStop.bind(this));
+        this.backend.softStop(fadeIn);
     },
 
 

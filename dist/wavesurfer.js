@@ -155,9 +155,19 @@ var WaveSurfer = {
         this.backend.play(start, end);
     },
 
-    softPlay: function(start, end, fadeIn){
-        this.fireEvent('interaction', this.softPlay.bind(this, start, end));
-        this.backend.softPlay(start, end, fadeIn);
+    softPlay: function(fadeIn){
+        this.fireEvent('interaction', this.softPlay.bind(this));
+        this.backend.softPlay(fadeIn);
+    },
+
+    softPause: function(fadeIn, pauseTime){
+        this.fireEvent('interaction', this.softPause.bind(this));
+        this.backend.softPause(fadeIn, pauseTime);
+    },
+
+    softStop: function(fadeIn){
+        this.fireEvent('interaction', this.softStop.bind(this));
+        this.backend.softStop(fadeIn);
     },
 
 
@@ -1069,21 +1079,37 @@ WaveSurfer.WebAudio = {
         this.fireEvent('play');
     },
 
-    softPlay: function(start, end, fadeIn){
-        var currentVol = this.getVolume();
-        this.gainNode.gain.value = 0.0;
-        this.gainNode.gain.exponentialRampToValueAtTime(currentVol, this.ac.currentTime + fadeIn);
-        this.play(start, end);
+    softPlay: function(fadeIn){
+        
+        this.gainNode.gain.setValueAtTime(0, this.ac.currentTime);
+        this.gainNode.gain.setTargetAtTime(1.0, this.ac.currentTime, fadeIn);
+        this.play();
     },
+    softPause: function(fadeIn, pauseTime){
+        console.log(fadeIn);
+        console.log(this.ac.currentTime);
+        this.gainNode.gain.setTargetAtTime(0.0, this.ac.currentTime, fadeIn);
+        this.pause(pauseTime);
+    },
+    softStop: function(fadeIn){
+        console.log(fadeIn);
+        console.log(this.ac.currentTime);
+        this.gainNode.gain.setTargetAtTime(0.0, this.ac.currentTime, fadeIn);
+        //this.stop(0.05);
+    },
+
 
     /**
      * Pauses the loaded audio.
      */
-    pause: function () {
+    pause: function (delay) {
+        if(delay == null){
+            delay = 0;
+        }
         this.scheduledPause = null;
 
         this.startPosition += this.getPlayedTime();
-        this.source && this.source.stop(0);
+        this.source && this.source.stop(this.ac.currentTime + delay);
 
         this.setState(this.PAUSED_STATE);
 
